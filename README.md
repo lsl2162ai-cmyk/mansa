@@ -1,240 +1,123 @@
-<img src="docs/images/logo.svg" width="72" alt="MANSA 로고" />
+# mansa — 개인 작업 기록 (lsl2162ai-cmyk)
 
-# MANSA
+> 원본 저장소: [HYUNDAI-AI-team6/mansa](https://github.com/HYUNDAI-AI-team6/mansa)
+> 팀 프로젝트 README: [TEAM_README.md](TEAM_README.md)
+> 이 문서는 팀 프로젝트에서 **내가 작성한 이슈·PR·커밋만** 정리한 것이다.
 
-**Manual & Safety Assistant — 매뉴얼을 물으면 안전이 따라옵니다**
+설비 매뉴얼·안전 문서를 근거로 답하는 기술 질의응답(L2) 서비스에서 **팀장**을 맡았다.
+개발에서는 **질의응답 처리 흐름, 검색(Retriever), LLM 공통 함수, 질문 분석기**를 구현했고,
+**발표 자료(PPT)와 결과보고서**를 작성했다.
 
-<img src="docs/images/login.png" width="900" alt="MANSA 로그인 화면" />
+## 팀장 · 산출물
 
-## 🔎 MANSA 소개
+**팀장**
 
-> 현장 엔지니어가 설비 매뉴얼과 안전 기준을 따로 찾지 않고, 질문 하나로 작업 절차·사양 수치·안전 요건을 출처와 함께 확인하도록 돕는 질의응답 서비스
+- 일정 관리, 역할 분배, 회의 진행, PR 리뷰·머지 등 팀 운영 전반 담당
 
-현대 AI 인사이트 캠퍼스 6팀 프로젝트입니다.
+**발표 자료 (PPT)**
 
-### 현장의 문제
+- 발표 자료 전체 작성 (발표는 다른 팀원이 진행)
 
-- 작업 절차는 매뉴얼에, 지켜야 할 기준은 법규·지침에 흩어져 있어 하나의 작업을 확인하려면 여러 문서를 열어야 합니다.
-- 매뉴얼의 수치와 안전 기준의 수치가 다를 때 어느 쪽을 따라야 하는지 직접 비교해야 합니다.
-- 답을 찾아도 근거 문서와 쪽수를 다시 확인해야 믿고 작업할 수 있습니다.
+**결과보고서**
 
-### MANSA는 이렇게 해결해요
+- 프로젝트 결과보고서 작성
 
-1. 흩어진 문서 → 매뉴얼과 안전 문서를 함께 검색해 `작업 절차 · 사양 수치 · 안전 요건`을 한 번에 보여 줍니다.
-2. 수치 불일치 → 매뉴얼과 안전 기준의 값을 코드로 비교해 `기준 차이`로 알려 줍니다.
-3. 근거 불안 → 답변마다 `출처와 원문`을 오른쪽에 보여 주고, 안전 요건에는 "AI가 찾은 참고 정보이며 최종 판단은 안전관리자 확인"을 함께 표시합니다.
-4. 모호한 질문 → 설비 모델이나 부품이 불분명하면 `되묻기`로 범위를 좁히고, 문서에 없는 질문은 `답변 불가`로 안내합니다.
+## 요약
 
-## ✨ 주요 기능
-
-### 사용자
-
-| 메뉴 | 기능 |
+| 항목 | 수 |
 | --- | --- |
-| 기술 Q&A | 질문하면 작업 절차·사양 수치·안전 요건·기준 차이를 출처와 함께 답변, 근거 원문 확인, 되묻기, 이어서 질문 |
-| 질문 기록 | 지난 대화 목록을 보고 누르면 그 대화를 다시 열람 |
-| 문서 조회 | 등록된 매뉴얼·안전 문서를 유형·부서·이름으로 찾고 PDF 열기 |
-| 고객센터 | MANSA 사용법을 챗봇에게 질문, 해결되지 않으면 관리자 연결 |
+| 이슈 | 7 |
+| PR (모두 머지) | 6 |
+| 커밋 | 8 |
+| 기간 | 2026-10-27 ~ 2026-10-29 |
 
-### 관리자
+## 주요 작업
 
-| 메뉴 | 기능 |
-| --- | --- |
-| 문서 관리 | 문서 현황과 처리 상태(처리 중·완료·실패) 확인, PDF 열기, 삭제 |
-| 문서 업로드 | PDF를 올리면 유형(기술 문서·안전 문서)과 부서를 지정해 등록 |
-| 기준정보 | 부서, 설비 모델, 작업 분류표·관계표, 동의어 관리 |
-| 평가 | 질문 세트로 검색·답변 품질을 실행하고 결과 확인, CSV 내보내기 |
-| 질문 테스트 | 관리자가 질문을 직접 해 보며 답변 확인(질문 기록에는 남지 않음) |
-| 회원 관리 | 회원 등록·수정·삭제와 권한 부여 |
+### 1. 질의응답 핵심 처리 단계 — [#32](https://github.com/HYUNDAI-AI-team6/mansa/issues/32) / [PR #36](https://github.com/HYUNDAI-AI-team6/mansa/pull/36)
 
-## 🖥️ 화면
+LLM·벡터 DB·MySQL 없이 동작하는 부분을 먼저 만들어 팀원이 맞출 기준을 정했다.
 
-| 기술 Q&A · 답변 | 고객센터 |
-| :---: | :---: |
-| <img src="docs/images/qa-answer.png" width="440" alt="기술 Q&A 답변 화면" /> | <img src="docs/images/support.png" width="440" alt="고객센터 화면" /> |
+- `core/schemas.py`: 질의응답 공통 데이터 구조 (`Intent`, `ScoredChunk`, `Evidence`, `AnswerSection`, `AnswerDraft`, `Answer`, `Clarify`, `NoAnswer`)
+- `core/exceptions.py`: `LlmError`
+- `merge_evidence`: 매뉴얼·안전 검색 결과 병합, 중복 청크는 높은 점수만 유지, 상위 8개 선택
+- `answer_guard.py`: `is_sufficient`(근거 충분성 판단), `build_no_answer`(사유별 답변 불가 안내)
+- `attach_notice`: 안전 영역 맨 앞에 안전관리자 확인 문구를 코드로 부착
+- `QAService.answer`: 질문 분석 → 범위 밖·되묻기 → 검색 → 근거 판단 → 생성·검증(최대 2회 재생성) → 안전 문구 → 기록 순서 조율. 단계별 입출력은 `Protocol`로 정의
+- 단위 테스트 21개 작성·통과 (외부 서비스는 가짜 객체로 대체)
 
-| 관리자 · 문서 관리 | 관리자 · 기준정보 |
-| :---: | :---: |
-| <img src="docs/images/admin-documents.png" width="440" alt="문서 관리 화면" /> | <img src="docs/images/admin-master.png" width="440" alt="기준정보 화면" /> |
+### 2. 안전 문서 하이브리드 검색 — [#41](https://github.com/HYUNDAI-AI-team6/mansa/issues/41) / [PR #43](https://github.com/HYUNDAI-AI-team6/mansa/pull/43)
 
-> 화면의 문서·수치(`[모델 A]`, `[값]` 등)는 시연용 예시 데이터입니다.
+- 검색 모듈을 `features/qa/` → `features/retrieval/`로 이동 (`bm25.py`, `rrf.py`, `retriever.py`)
+- `search_safety` 1~4단계 구현
+  1. 검색어 보강: 작업 부위·작업 내용을 질문에 덧붙임 (보강 함수는 교체 가능)
+  2. 벡터 검색: `secure/safety_docs` 컬렉션 상위 20개
+  3. BM25 검색: 안전 문서 전체를 500개씩 나눠 읽어 상위 20개
+  4. RRF로 두 순위를 합쳐 최종 순서 결정
+- 외부 호출 함수를 인자로 받아 설정·네트워크 없이 테스트 가능하게 설계
 
-## ⚙️ 동작 방식
+### 3. LLM 공통 함수 `core.llm`
 
-```
-문서 등록   PDF 업로드 → 텍스트 추출 → 청킹 → 임베딩 → 벡터 DB(Chroma) 색인
+**`embed`** — [#55](https://github.com/HYUNDAI-AI-team6/mansa/issues/55) / [PR #57](https://github.com/HYUNDAI-AI-team6/mansa/pull/57)
 
-질문 처리   질문 입력
-            → 질문 분석 (LLM: 설비 모델·작업 파악, 되묻기·답변 불가 판단)
-            → 검색 (벡터 + BM25, 분류표·관계표로 검색어 보강)
-            → 답변 생성 (LLM: 절차·사양·안전 요건·기준 차이)
-            → 출처·수치 검사 후 표시
-```
+- 텍스트 목록 → 임베딩 벡터 목록, 모델 객체는 한 번 만들고 재사용
+- `EMBEDDING_MODEL` 설정 분리 (기본 `text-embedding-3-large`, 3072차원)
+- API 키가 없으면 호출 전 오류, 빈 입력은 API 호출 없이 빈 목록 반환
+- 모델 변경(1536 → 3072차원)에 따른 컬렉션 재적재 필요성을 팀에 공유
 
-질문 한 번에 LLM은 두 번(질문 분석, 답변 생성) 호출하는 것을 기준으로 설계했습니다.
+**`complete`** — [#71](https://github.com/HYUNDAI-AI-team6/mansa/issues/71) / [PR #73](https://github.com/HYUNDAI-AI-team6/mansa/pull/73)
 
-## 🚧 개발 현황
+- `with_structured_output`으로 Pydantic 형식의 응답만 받아 `dict`로 반환
+- 형식 오류·길이 잘림·시간 초과만 `LLM_MAX_RETRIES`번 재시도, 초과 시 원인 예외를 보존한 `LlmError`
+- LLM 거부는 즉시 `LlmError`, 인증 실패 등은 그대로 전달
+- SDK 자체 재시도를 꺼서 재시도 횟수를 정확히 제어
+- `LLM_TIMEOUT`(30초), `LLM_MAX_RETRIES`(2회) 설정 추가
 
-- **화면:** 사용자·관리자 화면 전체를 `mansa/ui/`에 구현했습니다. 현재는 `ui/mock_data.py`의 목데이터로 동작하며, 각 기능이 완성되면 화면 코드의 목데이터 호출만 실제 함수로 바꿉니다.
-- **연결 중:** 로그인·회원 관리, 문서 업로드·처리, 벡터 DB 검색, LLM 질문 분석·답변, 평가 기능을 `mansa/features/`와 `mansa/core/`에 순차적으로 붙이고 있습니다.
-- **계속 목데이터:** 고객센터의 관리자 연결은 시연을 위한 화면만 제공합니다.
+### 4. 질문 분석기 `QuestionAnalyzer`
 
-## 🛠️ Tech Stack & Library
+**`validate_ids`** — [#80](https://github.com/HYUNDAI-AI-team6/mansa/issues/80) / [PR #86](https://github.com/HYUNDAI-AI-team6/mansa/pull/86)
 
-| 기술 / 라이브러리 | 목적 |
-| --- | --- |
-| **Python 3.11.9** | 개발 기준 언어 버전 |
-| **uv** | 가상환경과 패키지 버전을 `pyproject.toml`·`uv.lock`으로 일관되게 관리 |
-| **Gradio 6.30** | 질문 입력과 답변 표시 화면을 Python으로 빠르게 구성 |
-| **LangChain** (`langchain-openai`) | 프롬프트 → 모델 → 결과 변환을 체인으로 연결해 LLM 호출 |
-| **ChromaDB** | 문서 조각의 임베딩 저장과 벡터 검색 |
-| **MySQL (Railway)** | 회원·문서·기준정보 등 관계형 데이터 저장 |
-| **SQLAlchemy / PyMySQL** | DB 접속과 쿼리 실행 |
-| **python-dotenv** | `.env`로 API 키와 접속 정보를 코드 밖에서 관리 |
+- LLM이 뽑은 모델·부위·작업을 실제 등록된 기준정보와 대조해 없는 값 제거
+- 동의어를 표준 태그로 변환 (예: "와이어로프" → "메인 로프")
+- 허용되지 않은 의도는 `out_of_scope`로, 중복 제거, 입력 불변(새 `Intent` 반환)
 
-## 🚀 시작하기
+**`analyze`** — [#88](https://github.com/HYUNDAI-AI-team6/mansa/issues/88) / [PR #94](https://github.com/HYUNDAI-AI-team6/mansa/pull/94)
 
-### 준비물
+- L2 질문 분석 프롬프트 작성: 의도 5종(사양·절차·안전·검사·범위 밖) 판단 기준, 등록 모델·부위·작업 목록 제공, 질문 원문은 지시가 아닌 데이터로 취급
+- 대화 첫 질문일 때만 같은 호출에서 대화 제목 생성 (추가 호출 없음)
+- LLM이 부위·작업을 빠뜨려도 질문 원문에서 분류표 이름을 찾아 보완
+- 실제 OpenAI 결과로 발견한 `validate_ids` 문제 수정 (모델명 대괄호 차이, 표준 부위가 동의어 변환으로 지워지던 문제, 단위만 있는 수치 제거)
 
-- [uv](https://docs.astral.sh/uv/getting-started/installation/) (Python 3.11.9는 uv가 필요할 때 내려받습니다)
-- Git
-- 지원 운영체제: macOS / Windows
+### 5. 태그 필터 벡터 검색 — [#104](https://github.com/HYUNDAI-AI-team6/mansa/issues/104)
 
-### 실행
+- 부위·작업 태그가 유사도 상위 20개 밖에 있으면 검색에서 빠지는 문제를 찾아 이슈로 정리
+- Chroma `where` 조건으로 태그 안에서 유사도 검색 후 RRF에 합치는 방향을 설계·검증
+- 구현은 검색 담당 팀원의 [PR #123](https://github.com/HYUNDAI-AI-team6/mansa/pull/123)으로 반영됨
 
-```bash
-git clone https://github.com/HYUNDAI-AI-team6/mansa.git
-cd mansa/mansa
+## 이슈 · PR 목록
 
-uv sync --locked
-uv run --locked python app.py
-```
+| 이슈 | 제목 | PR | 머지일 |
+| --- | --- | --- | --- |
+| [#32](https://github.com/HYUNDAI-AI-team6/mansa/issues/32) | 질의응답 핵심 처리 단계 구현 | [#36](https://github.com/HYUNDAI-AI-team6/mansa/pull/36) | 2026-10-27 |
+| [#41](https://github.com/HYUNDAI-AI-team6/mansa/issues/41) | 안전 문서 하이브리드 검색(search_safety) 구현 | [#43](https://github.com/HYUNDAI-AI-team6/mansa/pull/43) | 2026-10-27 |
+| [#55](https://github.com/HYUNDAI-AI-team6/mansa/issues/55) | core.llm 임베딩 함수(embed) 추가 | [#57](https://github.com/HYUNDAI-AI-team6/mansa/pull/57) | 2026-10-28 |
+| [#71](https://github.com/HYUNDAI-AI-team6/mansa/issues/71) | core.llm 구조화 응답 호출 함수(complete) 추가 | [#73](https://github.com/HYUNDAI-AI-team6/mansa/pull/73) | 2026-10-28 |
+| [#80](https://github.com/HYUNDAI-AI-team6/mansa/issues/80) | QuestionAnalyzer.validate_ids 구현 | [#86](https://github.com/HYUNDAI-AI-team6/mansa/pull/86) | 2026-10-28 |
+| [#88](https://github.com/HYUNDAI-AI-team6/mansa/issues/88) | QuestionAnalyzer.analyze 구현 (L2 질문 분석) | [#94](https://github.com/HYUNDAI-AI-team6/mansa/pull/94) | 2026-10-28 |
+| [#104](https://github.com/HYUNDAI-AI-team6/mansa/issues/104) | 태그 필터를 건 벡터 유사도 검색 추가 | 팀원 [#123](https://github.com/HYUNDAI-AI-team6/mansa/pull/123) | — |
 
-터미널에 표시되는 주소(기본 `http://127.0.0.1:7860`)를 브라우저에서 엽니다.
-지금은 목데이터로 동작하므로 아이디와 비밀번호에 아무 값이나 입력하면 로그인됩니다.
-"관리자 계정으로 로그인"을 누르면 관리자 화면으로 들어갑니다.
+## 커밋 목록
 
-### 환경변수
-
-DB·LLM·벡터 DB 연결 기능을 사용할 때는 `.env`가 필요합니다. 화면만 확인할 때는 없어도 실행됩니다.
-
-```bash
-cp .env.example .env        # Windows: copy .env.example .env
-```
-
-`.env`의 값은 팀에서 공유받은 값으로 채웁니다. API 키와 비밀번호는 코드나 커밋에 넣지 않습니다.
-
-| 변수 | 설명 |
-| --- | --- |
-| `DATABASE_URL` | Railway MySQL 접속 주소 |
-| `LLM_API_KEY` | LLM API 키 |
-| `LLM_MODEL` | 사용할 LLM 모델 이름 |
-| `TECH_CHROMA_HOST` · `SECURE_CHROMA_HOST` · `CHROMA_PORT` | Railway Chroma 벡터 DB 접속 정보 |
-
-### 테스트
-
-```bash
-uv run --locked python -B -m unittest discover -s tests -v
-```
-
-## 📁 Foldering
-
-```
-📁 mansa (저장소)
-├── 📁 .github                 # 이슈·PR 템플릿
-├── 📁 docs                    # 개발 문서, README 화면 캡처
-├── 📝 AGENTS.md               # AI 코딩 도구 공통 규칙
-├── 📝 README.md
-│
-└── 📁 mansa                   # 앱 (uv 프로젝트 루트)
-    ├── 📝 app.py              # Gradio 실행 진입점
-    ├── 📝 config.py           # 환경변수 읽기
-    ├── 📝 pyproject.toml
-    ├── 📝 uv.lock
-    │
-    ├── 📁 core                # DB 연결, LLM 호출 등 공통 핵심 기능
-    ├── 📁 features            # 기능별 로직
-    │   ├── 📁 auth            #   로그인·회원
-    │   ├── 📁 documents       #   문서 관리
-    │   ├── 📁 processing      #   PDF 추출·청킹
-    │   ├── 📁 llm             #   질문 분석·답변
-    │   ├── 📁 retrieval       #   임베딩·검색
-    │   └── 📁 dashboard
-    ├── 📁 ui                  # Gradio 화면 (login, qa, support, documents, ...)
-    │   ├── 📁 assets          #   CSS, 아이콘
-    │   └── 📝 mock_data.py    #   기능 연결 전 목데이터
-    ├── 📁 util                # MySQL·벡터 DB 접속 도구
-    └── 📁 tests
-```
-
-폴더별 역할은 [프로젝트 구조 설명서](docs/PROJECT_STRUCTURE.md)에 자세히 정리했습니다.
-
-## 👥 Team
-
-| 이름 | 담당 |
-| :---: | --- |
-| 류영걸 | MySQL · ChromaDB 연결, 환경 변수, 로그인 · 세션 · 회원 관리, 문서 관리 화면(DB 연결) |
-| 박규진 | 관리자 평가(백엔드 · 화면), 고객센터 챗봇, 사용자 문서 조회, 태그 필터 검색, 협업 규칙 |
-| 장영균 | 문서 추출 · 청킹 · 태그 · 임베딩 검증, DocumentService(등록 · 조회 · 상태 · 결과 기록) |
-| 박정환 | 화면 전체 틀, 기준정보, 문서 처리 파이프라인 · 삭제 · 업로드 흐름 · 화면 연결, 기준 차이 비교 |
-| 이세림 | 질문 분석 · QAService 처리 순서 · 답변 불가 · 안전 문구 · 안전 문서 검색, LLM 호출 · 임베딩 |
-| 강병훈 | 검색(BM25 · 태그 · RRF) · 답변 생성 · 되묻기 · 질문 기록 · 근거 원문, 기술 Q&A 화면 연결 |
-
-## 📣 Convention
-
-자세한 내용은 [Git 협업 컨벤션](docs/GIT_CONVENTION.md)을 따릅니다.
-
-| 대상 | 형식 | 예시 |
+| 날짜 | 커밋 | 내용 |
 | --- | --- | --- |
-| 커밋 | `type: 작업 내용` (한국어) | `feat: 로그인 API 구현` |
-| 브랜치 | `type/이슈번호-작업내용` | `feat/17-login-api` |
-| 이슈 | `[type] 작업 내용` | `[feat] 로그인 API 구현` |
-| PR | `[type] 작업 내용 (#이슈번호)` | `[feat] 로그인 API 구현 (#17)` |
+| 2026-10-27 | [`9b0e438`](https://github.com/HYUNDAI-AI-team6/mansa/commit/9b0e438) | QA 서비스 구현 (근거 병합, 안전 문구 부착) |
+| 2026-10-27 | [`0b5a8ae`](https://github.com/HYUNDAI-AI-team6/mansa/commit/0b5a8ae) | 로컬 전용 QA 테스트 파일 정리 |
+| 2026-10-27 | [`cacf024`](https://github.com/HYUNDAI-AI-team6/mansa/commit/cacf024) | 검색 모듈 재구성 및 BM25 순위 구현 |
+| 2026-10-28 | [`f5745b0`](https://github.com/HYUNDAI-AI-team6/mansa/commit/f5745b0) | 임베딩 모델 설정 및 `embed` 추가 |
+| 2026-10-28 | [`eaa5e78`](https://github.com/HYUNDAI-AI-team6/mansa/commit/eaa5e78) | `EMBEDDING_MODEL` 기본값 처리 수정 |
+| 2026-10-28 | [`82ba837`](https://github.com/HYUNDAI-AI-team6/mansa/commit/82ba837) | LLM 타임아웃·재시도 설정 및 `complete` 추가 |
+| 2026-10-28 | [`b575a5e`](https://github.com/HYUNDAI-AI-team6/mansa/commit/b575a5e) | `QuestionAnalyzer` 의도 검증·정규화 구현 |
+| 2026-10-28 | [`68a987a`](https://github.com/HYUNDAI-AI-team6/mansa/commit/68a987a) | `QuestionAnalyzer` 프롬프트·검증 보완 |
 
-| 타입 | 사용하는 부분 |
-| :---: | --- |
-| `feat` | 새로운 기능 추가 |
-| `fix` | 버그 수정 |
-| `design` | CSS 등 사용자 UI 디자인 변경 |
-| `refactor` | 기능 변경 없는 코드 구조 개선 |
-| `docs` | README 등 문서 작성·수정 |
-| `test` | 테스트 코드 추가·수정 |
-| `build` | uv 등 빌드·의존성 변경 |
-| `chore` | 기타 유지보수·설정 작업 |
+## 사용 기술
 
-### 코드 스타일
-
-Python 3.11 기준이며 패키지는 `uv add`로 추가하고 `uv.lock`은 직접 수정하지 않습니다. 자세한 기준은 [Python 개발 가이드](docs/dev-stack-python.md)를 따릅니다.
-
-## 🐾 Git Flow
-
-**Default Branch & PR Target : `develop`**
-
-`main`에는 직접 푸시하지 않습니다. 모든 작업은 `develop`을 기준으로 진행하고, 개발이 끝나면 `develop`을 `main`에 합칩니다.
-
-```
-1. 작업할 내용에 대해 이슈를 만든다. (이슈 제목: [type] 작업 내용)
-
-2. 최신 develop 브랜치에서 새 브랜치를 만든다. (브랜치 이름: type/이슈번호-작업내용)
-   - 브랜치를 만들기 전에 develop을 pull 받는다.
-
-3. 만든 브랜치에서 작업하고, 커밋은 하나의 논리적 작업 단위로 쪼개 컨벤션에 맞춰 작성한다.
-
-4. 작업이 끝나면 에러 없이 실행되는지 확인한 뒤 push 한다.
-   - PR을 올리기 전에 작업 브랜치에 develop을 pull 받아 충돌을 해결하고 push 하는 것을 권장한다.
-
-5. PR을 작성하고 팀원의 코드 리뷰를 반영한 뒤 develop에 merge 한다.
-   - PR 본문에 Closes #이슈번호를 적어 이슈를 연결한다.
-   - merge 후 작업 브랜치는 삭제한다.
-
-6. 모든 개발이 끝나면 develop을 main에 합친다.
-```
-
-## 📚 문서
-
-- [프로젝트 구조 설명서](docs/PROJECT_STRUCTURE.md)
-- [Python 개발 가이드](docs/dev-stack-python.md)
-- [Git 협업 컨벤션](docs/GIT_CONVENTION.md)
-- [MySQL 연결 가이드](docs/MySqlConnector.md)
-- [벡터 DB 연결 가이드](docs/VectorDBConnector.md)
-- [AI 코딩 도구 공통 규칙](AGENTS.md)
+Python, uv, LangChain + OpenAI (structured output, embeddings), ChromaDB, BM25, RRF, Pydantic, unittest
