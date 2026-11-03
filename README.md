@@ -62,7 +62,7 @@
 질문이 들어와서 답이 나가기까지의 **처리 순서와 공통 데이터 구조**를 설계하고, 질문 분석·안전 문서 검색·LLM 호출 모듈을 구현했습니다.
 
 ```mermaid
-flowchart LR
+flowchart TD
     Q([질문]) --> A[질문 분석<br/>QuestionAnalyzer]
     A --> V[ID 검증·정규화<br/>validate_ids]
     V --> C{범위 밖·<br/>되묻기}
